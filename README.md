@@ -44,3 +44,74 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+  ✅ Features Implemented
+
+  Authentication System:
+  - User registration and login with JWT tokens
+  - Secure password hashing with bcrypt
+  - Protected routes and API endpoints
+
+  Database:
+  - SQLite database with Prisma ORM
+  - User and Tunnel models with proper relationships
+  - Automatic database migrations
+
+  Tunnel Management:
+  - Create tunnel records with service type, hostname, ports, etc.
+  - View all user's tunnel records
+  - Delete tunnel records
+  - Generate cloudflared commands automatically
+
+  UI/UX:
+  - Modern design with Tailwind CSS
+  - Responsive layout
+  - Form validation and loading states
+  - Copy-to-clipboard functionality for commands
+  - Modal for displaying generated commands
+
+  🚀 How to Run
+
+  1. Start the development servers:
+  npm run dev
+  1. This runs both the backend API (port 3001) and React frontend (port 3000)
+  2. Or run separately:
+  # Backend only
+  npm run server
+
+  # Frontend only (in another terminal)
+  npm start
+
+  📁 Project Structure
+
+  src/
+  ├── api/                 # Backend Express server
+  │   ├── middleware/      # Authentication middleware
+  │   ├── routes/         # API routes (auth, tunnels)
+  │   └── server.ts       # Main server file
+  ├── components/         # React components
+  │   ├── AuthForm.tsx    # Login/Register form
+  │   ├── TunnelForm.tsx  # Create tunnel form
+  │   ├── TunnelList.tsx  # Display tunnel records
+  │   ├── CommandsModal.tsx # Show generated commands
+  │   └── Layout.tsx      # App layout
+  ├── hooks/              # Custom React hooks
+  │   └── useAuth.ts      # Authentication hook
+  ├── types/              # TypeScript types
+  │   ├── auth.ts
+  │   └── tunnel.ts
+  └── utils/              # Utility functions
+      ├── auth.ts         # JWT/password utilities
+      └── database.ts     # Prisma client
+
+  🔐 Security Features
+
+  - JWT token authentication
+  - Password hashing with bcrypt
+  - Rate limiting on API endpoints
+  - CORS protection
+  - Helmet security headers
+  - Input validation
+
+  The application follows the reference design you provided but adds user authentication and a proper database backend. Users can now sign up, create tunnel
+  records, and generate the exact cloudflared commands needed to set up their tunnels.
