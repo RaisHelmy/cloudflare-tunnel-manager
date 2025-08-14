@@ -42,6 +42,10 @@ RUN npx prisma generate
 # Copy built React app to serve statically
 COPY --from=build /app/build ./public
 
+# Copy and set up entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 # Create database directory
 RUN mkdir -p /app/data
 
@@ -65,5 +69,6 @@ USER nodejs
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:3001/api/health || exit 1
 
-# Start the application
+# Set entrypoint and start command
+ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["dumb-init", "npx", "ts-node", "--transpile-only", "server.ts"]

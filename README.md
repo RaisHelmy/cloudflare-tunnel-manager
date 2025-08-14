@@ -247,9 +247,10 @@ volumes:
 ## 🐳 Docker Information
 
 ### Available Images
-- **Docker Hub**: `raishelmy/cloudflare-tunnel-manager:latest`
+- **Docker Hub**: `raishelmy/cloudflare-tunnel-manager:latest` ✅ **READY FOR PRODUCTION**
 - **Multi-architecture**: ✅ Supports both AMD64 and ARM64
-- **Versioned**: `raishelmy/cloudflare-tunnel-manager:v1.0`
+- **Auto Database Setup**: ✅ Automatically initializes SQLite database on first run
+- **Versioned**: `raishelmy/cloudflare-tunnel-manager:v1.2` (latest with database auto-init)
 
 ### Building Locally
 ```bash

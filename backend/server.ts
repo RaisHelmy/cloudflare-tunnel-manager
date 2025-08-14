@@ -40,7 +40,9 @@ app.get('/api/health', (req, res) => {
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'public')));
   
-  app.get('*', (req, res) => {
+  // Catch-all handler: send back React's index.html file for client-side routing
+  // Only for non-API routes
+  app.get(/^(?!\/api).*/, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
   });
 }
