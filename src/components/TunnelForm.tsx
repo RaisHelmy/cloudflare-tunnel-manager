@@ -13,11 +13,11 @@ export const TunnelForm: React.FC<TunnelFormProps> = ({ onSubmit, loading }) => 
     hostname: '',
     localPort: 3389,
     localHost: 'localhost',
-    protocol: 'tcp'
+    protocol: 'rdp'
   });
 
   const defaultPorts: Record<string, { port: number; protocol: string }> = {
-    rdp: { port: 3389, protocol: 'tcp' },
+    rdp: { port: 3389, protocol: 'rdp' },
     ssh: { port: 22, protocol: 'tcp' },
     http: { port: 80, protocol: 'http' },
     https: { port: 443, protocol: 'https' },
@@ -44,7 +44,7 @@ export const TunnelForm: React.FC<TunnelFormProps> = ({ onSubmit, loading }) => 
       hostname: '',
       localPort: 3389,
       localHost: 'localhost',
-      protocol: 'tcp'
+      protocol: 'rdp'
     });
   };
 
@@ -146,6 +146,7 @@ export const TunnelForm: React.FC<TunnelFormProps> = ({ onSubmit, loading }) => 
               onChange={(e) => setFormData({ ...formData, protocol: e.target.value })}
               className="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 border"
             >
+              <option value="rdp">RDP</option>
               <option value="tcp">TCP</option>
               <option value="udp">UDP</option>
               <option value="http">HTTP</option>

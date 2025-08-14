@@ -91,7 +91,9 @@ export const CommandsModal: React.FC<CommandsModalProps> = ({ tunnel, onClose })
               {/* Tunnel Run Command */}
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-sm font-medium text-gray-700">2. Run Tunnel</h3>
+                  <h3 className="text-sm font-medium text-gray-700">
+                    {tunnel.serviceType === 'rdp' || tunnel.protocol === 'rdp' ? '2. Start RDP Access' : '2. Run Tunnel'}
+                  </h3>
                   <button
                     onClick={() => copyToClipboard(commands.runCommand, 'run')}
                     className="py-1 px-2 inline-flex items-center gap-x-1 text-xs font-medium rounded border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50"
@@ -118,10 +120,22 @@ export const CommandsModal: React.FC<CommandsModalProps> = ({ tunnel, onClose })
                     </svg>
                   </div>
                   <div className="ms-3">
-                    <h3 className="text-sm font-semibold text-blue-800">DNS Record Required</h3>
-                    <p className="text-sm text-blue-700 mt-1">
-                      Don't forget to create a CNAME record in your DNS settings pointing <strong>{tunnel.hostname}</strong> to your tunnel subdomain.
-                    </p>
+                    {tunnel.serviceType === 'rdp' || tunnel.protocol === 'rdp' ? (
+                      <>
+                        <h3 className="text-sm font-semibold text-blue-800">Setup Required</h3>
+                        <p className="text-sm text-blue-700 mt-1">
+                          1. Add <strong>{tunnel.hostname}</strong> to your Cloudflare Access application<br/>
+                          2. Configure your RDP client to connect to <strong>{tunnel.hostname}</strong>
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <h3 className="text-sm font-semibold text-blue-800">DNS Record Required</h3>
+                        <p className="text-sm text-blue-700 mt-1">
+                          Don't forget to create a CNAME record in your DNS settings pointing <strong>{tunnel.hostname}</strong> to your tunnel subdomain.
+                        </p>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>

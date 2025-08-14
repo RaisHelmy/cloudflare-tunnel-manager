@@ -20,6 +20,10 @@ export interface CreateTunnelData {
   protocol: string;
 }
 
+export interface UpdateTunnelData extends CreateTunnelData {
+  id: string;
+}
+
 export interface TunnelCommands {
   configCommand: string;
   runCommand: string;

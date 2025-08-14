@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { authenticateToken } from '../middleware/auth';
-import prisma from '../../utils/database';
+import prisma from '../utils/database';
 
 const router = express.Router();
 
@@ -51,6 +51,47 @@ router.post('/', authenticateToken, async (req: AuthRequest, res: Response) => {
   }
 });
 
+// Update tunnel
+router.put('/:id', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { name, serviceType, hostname, localPort, localHost, protocol } = req.body;
+
+    if (!name || !serviceType || !hostname || !localPort || !localHost || !protocol) {
+      return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    // Check if tunnel belongs to user
+    const existingTunnel = await prisma.tunnel.findFirst({
+      where: { 
+        id,
+        userId: req.user.userId 
+      }
+    });
+
+    if (!existingTunnel) {
+      return res.status(404).json({ error: 'Tunnel not found' });
+    }
+
+    const tunnel = await prisma.tunnel.update({
+      where: { id },
+      data: {
+        name,
+        serviceType,
+        hostname,
+        localPort: parseInt(localPort),
+        localHost,
+        protocol
+      }
+    });
+
+    res.json(tunnel);
+  } catch (error) {
+    console.error('Update tunnel error:', error);
+    res.status(500).json({ error: 'Failed to update tunnel' });
+  }
+});
+
 // Delete tunnel
 router.delete('/:id', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
@@ -95,16 +136,27 @@ router.get('/:id/commands', authenticateToken, async (req: AuthRequest, res: Res
       return res.status(404).json({ error: 'Tunnel not found' });
     }
 
-    const configCommand = `cloudflared tunnel create ${tunnel.name}`;
+    let configCommand, runCommand;
     
-    let service;
-    if (tunnel.protocol === 'http' || tunnel.protocol === 'https') {
-      service = `${tunnel.protocol}://${tunnel.localHost}:${tunnel.localPort}`;
+    configCommand = `cloudflared tunnel create ${tunnel.name}`;
+    
+    if (tunnel.serviceType === 'rdp' || tunnel.protocol === 'rdp') {
+      // RDP uses cloudflared access rdp format
+      runCommand = `cloudflared access rdp --hostname ${tunnel.hostname} --url rdp://${tunnel.localHost}:${tunnel.localPort}`;
+    } else if (tunnel.serviceType === 'tcp' || tunnel.protocol === 'tcp') {
+      // TCP uses cloudflared access tcp format
+      runCommand = `cloudflared access tcp --hostname ${tunnel.hostname} --url ${tunnel.localHost}:${tunnel.localPort}`;
     } else {
-      service = `${tunnel.protocol}://${tunnel.localHost}:${tunnel.localPort}`;
+      // Standard tunnel commands for HTTP/HTTPS and other protocols
+      let service;
+      if (tunnel.protocol === 'http' || tunnel.protocol === 'https') {
+        service = `${tunnel.protocol}://${tunnel.localHost}:${tunnel.localPort}`;
+      } else {
+        service = `${tunnel.protocol}://${tunnel.localHost}:${tunnel.localPort}`;
+      }
+      
+      runCommand = `cloudflared tunnel --hostname ${tunnel.hostname} run ${tunnel.name} --url ${service}`;
     }
-    
-    const runCommand = `cloudflared tunnel --hostname ${tunnel.hostname} run ${tunnel.name} --url ${service}`;
 
     res.json({
       configCommand,

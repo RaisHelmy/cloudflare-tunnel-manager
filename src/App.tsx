@@ -4,14 +4,14 @@ import { AuthForm } from './components/AuthForm';
 import { Layout } from './components/Layout';
 import { TunnelForm } from './components/TunnelForm';
 import { TunnelList } from './components/TunnelList';
-import { CommandsModal } from './components/CommandsModal';
-import { Tunnel, CreateTunnelData } from './types/tunnel';
+import { EditTunnelModal } from './components/EditTunnelModal';
+import { Tunnel, CreateTunnelData, UpdateTunnelData } from './types/tunnel';
 
 function App() {
   const auth = useAuthState();
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   const [tunnels, setTunnels] = useState<Tunnel[]>([]);
-  const [selectedTunnel, setSelectedTunnel] = useState<Tunnel | null>(null);
+  const [editingTunnel, setEditingTunnel] = useState<Tunnel | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -54,10 +54,36 @@ function App() {
       if (response.ok) {
         const newTunnel = await response.json();
         setTunnels([newTunnel, ...tunnels]);
-        setSelectedTunnel(newTunnel);
       }
     } catch (error) {
       console.error('Failed to create tunnel:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdateTunnel = async (data: UpdateTunnelData) => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/tunnels/${data.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (response.ok) {
+        const updatedTunnel = await response.json();
+        setTunnels(tunnels.map(tunnel => 
+          tunnel.id === data.id ? updatedTunnel : tunnel
+        ));
+        setEditingTunnel(null);
+      }
+    } catch (error) {
+      console.error('Failed to update tunnel:', error);
     } finally {
       setLoading(false);
     }
@@ -107,12 +133,14 @@ function App() {
         <TunnelList
           tunnels={tunnels}
           onDelete={handleDeleteTunnel}
-          onShowCommands={setSelectedTunnel}
+          onEdit={setEditingTunnel}
         />
-        {selectedTunnel && (
-          <CommandsModal
-            tunnel={selectedTunnel}
-            onClose={() => setSelectedTunnel(null)}
+        {editingTunnel && (
+          <EditTunnelModal
+            tunnel={editingTunnel}
+            onSave={handleUpdateTunnel}
+            onClose={() => setEditingTunnel(null)}
+            loading={loading}
           />
         )}
       </Layout>

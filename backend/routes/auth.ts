@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
-import { hashPassword, comparePassword, generateToken } from '../../utils/auth';
-import prisma from '../../utils/database';
+import { hashPassword, comparePassword, generateToken } from '../utils/auth';
+import prisma from '../utils/database';
 
 const router = express.Router();
 

@@ -1,117 +1,146 @@
-# Getting Started with Create React App
+# Cloudflare Tunnel Manager
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React-based web application for managing Cloudflare tunnel records with user authentication. Users can sign up, create tunnel configurations, and generate the exact cloudflared commands needed to set up their tunnels.
 
-## Available Scripts
+## ✨ Features
 
-In the project directory, you can run:
+- **User Authentication**: Secure signup/signin with JWT tokens
+- **Tunnel Management**: Create, view, and delete tunnel records
+- **Command Generation**: Automatically generate cloudflared commands
+- **Modern UI**: Built with React, TypeScript, and Tailwind CSS
+- **Secure Backend**: Express.js API with SQLite database using Prisma ORM
 
-### `npm start`
+## 🚀 Quick Start
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Prerequisites
+- Node.js 16+ 
+- npm
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### Installation
 
-### `npm test`
+1. **Install dependencies:**
+   ```bash
+   npm install --legacy-peer-deps
+   ```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2. **Set up the database:**
+   ```bash
+   npm run db:push
+   npm run db:generate
+   ```
 
-### `npm run build`
+3. **Start the development servers:**
+   ```bash
+   # Option 1: Run both servers with one command
+   npm run dev
+   
+   # Option 2: Run servers separately
+   # Terminal 1 - Backend API (port 3001)
+   npm run server
+   
+   # Terminal 2 - React frontend (use custom port if 3000 is busy)
+   PORT=3002 npm start
+   ```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+4. **Open your browser:**
+   - Frontend: http://localhost:3002 (or 3000 if available)
+   - Backend API: http://localhost:3001
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 📁 Project Structure
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```
+├── backend/               # Express.js backend
+│   ├── middleware/       # Authentication middleware
+│   ├── routes/          # API routes (auth, tunnels)
+│   ├── utils/           # Database & auth utilities
+│   └── server.ts        # Main server file
+├── src/                 # React frontend
+│   ├── components/      # React components
+│   ├── hooks/          # Custom React hooks
+│   └── types/          # TypeScript type definitions
+├── prisma/             # Database schema
+└── public/             # Static assets
+```
 
-### `npm run eject`
+## 🔐 API Endpoints
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### Authentication
+- `POST /api/auth/register` - Create new user account
+- `POST /api/auth/login` - User login
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Tunnels (Protected)
+- `GET /api/tunnels` - Get user's tunnel records
+- `POST /api/tunnels` - Create new tunnel record
+- `DELETE /api/tunnels/:id` - Delete tunnel record
+- `GET /api/tunnels/:id/commands` - Generate cloudflared commands
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## 🛠 Available Scripts
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+- `npm start` - Start React development server
+- `npm run server` - Start backend API server
+- `npm run dev` - Start both servers concurrently
+- `npm run build` - Build React app for production
+- `npm run db:push` - Push database schema changes
+- `npm run db:generate` - Generate Prisma client
 
-## Learn More
+## 💾 Database
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+The application uses SQLite with Prisma ORM. The database file is created as `dev.db` in the project root.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Models:
+- **User**: User accounts with email/password authentication
+- **Tunnel**: Tunnel configuration records linked to users
 
-  ✅ Features Implemented
+## 🎨 UI Components
 
-  Authentication System:
-  - User registration and login with JWT tokens
-  - Secure password hashing with bcrypt
-  - Protected routes and API endpoints
+Built with:
+- **React 18** with TypeScript
+- **Tailwind CSS** for styling
+- **Headless UI** for accessible components
+- **Heroicons** for icons
 
-  Database:
-  - SQLite database with Prisma ORM
-  - User and Tunnel models with proper relationships
-  - Automatic database migrations
+## 🔒 Security Features
 
-  Tunnel Management:
-  - Create tunnel records with service type, hostname, ports, etc.
-  - View all user's tunnel records
-  - Delete tunnel records
-  - Generate cloudflared commands automatically
+- Password hashing with bcrypt
+- JWT token authentication
+- CORS protection
+- Rate limiting
+- Helmet security headers
+- Input validation
 
-  UI/UX:
-  - Modern design with Tailwind CSS
-  - Responsive layout
-  - Form validation and loading states
-  - Copy-to-clipboard functionality for commands
-  - Modal for displaying generated commands
+## 🚇 Tunnel Types Supported
 
-  🚀 How to Run
+- **RDP** (Remote Desktop Protocol)
+- **SSH** (Secure Shell)
+- **HTTP/HTTPS** (Web services)
+- **TCP/UDP** (Custom protocols)
 
-  1. Start the development servers:
-  npm run dev
-  1. This runs both the backend API (port 3001) and React frontend (port 3000)
-  2. Or run separately:
-  # Backend only
-  npm run server
+## 📝 Environment Variables
 
-  # Frontend only (in another terminal)
-  npm start
+The `.env` file is already configured with:
 
-  📁 Project Structure
+```env
+DATABASE_URL="file:./dev.db"
+JWT_SECRET="your-super-secret-jwt-key-change-this-in-production"
+```
 
-  src/
-  ├── api/                 # Backend Express server
-  │   ├── middleware/      # Authentication middleware
-  │   ├── routes/         # API routes (auth, tunnels)
-  │   └── server.ts       # Main server file
-  ├── components/         # React components
-  │   ├── AuthForm.tsx    # Login/Register form
-  │   ├── TunnelForm.tsx  # Create tunnel form
-  │   ├── TunnelList.tsx  # Display tunnel records
-  │   ├── CommandsModal.tsx # Show generated commands
-  │   └── Layout.tsx      # App layout
-  ├── hooks/              # Custom React hooks
-  │   └── useAuth.ts      # Authentication hook
-  ├── types/              # TypeScript types
-  │   ├── auth.ts
-  │   └── tunnel.ts
-  └── utils/              # Utility functions
-      ├── auth.ts         # JWT/password utilities
-      └── database.ts     # Prisma client
+## 🌐 Usage
 
-  🔐 Security Features
+1. **Sign Up/Sign In**: Create an account or log in
+2. **Create Tunnel**: Fill out the tunnel configuration form
+3. **Generate Commands**: Click "View Commands" on any tunnel record
+4. **Copy Commands**: Use the copy buttons to get the cloudflared commands
+5. **Run Cloudflare Tunnel**: Execute the generated commands in your terminal
 
-  - JWT token authentication
-  - Password hashing with bcrypt
-  - Rate limiting on API endpoints
-  - CORS protection
-  - Helmet security headers
-  - Input validation
+## 🔧 Development Notes
 
-  The application follows the reference design you provided but adds user authentication and a proper database backend. Users can now sign up, create tunnel
-  records, and generate the exact cloudflared commands needed to set up their tunnels.
+- Backend uses `--transpile-only` flag for faster TypeScript compilation
+- Frontend includes hot reloading and proxies API requests to backend
+- Database models are automatically synced with Prisma
+
+## 📦 Production Deployment
+
+1. Build the React app: `npm run build`
+2. Serve the built files and run the backend server
+3. Configure environment variables for production
+4. Set up a production database (PostgreSQL/MySQL recommended)

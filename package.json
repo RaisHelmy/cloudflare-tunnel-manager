@@ -38,7 +38,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "server": "npx ts-node src/api/server.ts",
+    "server": "npx ts-node --transpile-only backend/server.ts",
     "dev": "concurrently \"npm run server\" \"npm start\"",
     "db:push": "prisma db push",
     "db:generate": "prisma generate"
@@ -65,6 +65,6 @@
   "devDependencies": {
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.11"
+    "tailwindcss": "^3.4.17"
   }
 }
