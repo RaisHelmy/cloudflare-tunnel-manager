@@ -5,6 +5,8 @@ import { Layout } from './components/Layout';
 import { TunnelForm } from './components/TunnelForm';
 import { TunnelList } from './components/TunnelList';
 import { EditTunnelModal } from './components/EditTunnelModal';
+import { ChatButton } from './components/ChatButton';
+import { ChatTerminal } from './components/ChatTerminal';
 import { Tunnel, CreateTunnelData, UpdateTunnelData } from './types/tunnel';
 
 function App() {
@@ -13,6 +15,7 @@ function App() {
   const [tunnels, setTunnels] = useState<Tunnel[]>([]);
   const [editingTunnel, setEditingTunnel] = useState<Tunnel | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showChatTerminal, setShowChatTerminal] = useState(false);
 
   useEffect(() => {
     if (auth.user) {
@@ -141,6 +144,13 @@ function App() {
             onSave={handleUpdateTunnel}
             onClose={() => setEditingTunnel(null)}
             loading={loading}
+          />
+        )}
+        <ChatButton onClick={() => setShowChatTerminal(true)} />
+        {showChatTerminal && (
+          <ChatTerminal
+            onClose={() => setShowChatTerminal(false)}
+            onCreateTunnel={handleCreateTunnel}
           />
         )}
       </Layout>
